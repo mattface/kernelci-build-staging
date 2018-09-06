@@ -182,6 +182,7 @@ def buildKernelStep(job, arch, config) {
         'COMMIT_ID': params.COMMIT_ID,
         'BRANCH': params.BRANCH,
         'SRC_TARBALL': params.SRC_TARBALL,
+        'COMPILER': 'gcc-7',
     ]
     def job_params = []
 
@@ -261,7 +262,7 @@ node("defconfig-creator") {
             def arch = x[0]
             def config = x[1]
             echo("${i} ${arch} ${config}")
-            builds["build${i}"] = buildKernelStep("kernel-build", arch, config)
+            builds["${i}_${arch}_${config}"] = buildKernelStep("kernel-build", arch, config)
             i += 1
         }
 

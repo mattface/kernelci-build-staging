@@ -98,7 +98,9 @@ node("builder") {
     CPU arch:  ${params.ARCH}
     Describe:  ${params.GIT_DESCRIBE}
     Revision:  ${params.COMMIT_ID}
-    Config:    ${params.DEFCONFIG}""")
+    Config:    ${params.DEFCONFIG}
+    Compiler:  ${params.COMPILER}
+    Dockerbase: ${params.DOCKERBASE}""")
 
     def k = new Kernel()
     def kci_build = env.WORKSPACE + '/kernelci-build'
@@ -115,9 +117,11 @@ node("builder") {
         }
     }
 
-    stage("Build") {
-        timeout(time: 180, unit: 'MINUTES') {
-            buildConfig(params.DEFCONFIG, kdir, kci_build)
+    docker.image("${params.DOCKERBASE}${params.COMPILER}_${params.ARCH}").inside {
+        stage("Build") {
+            timeout(time: 180, unit: 'MINUTES') {
+                buildConfig(params.DEFCONFIG, kdir, kci_build)
+            }
         }
     }
 }
